@@ -7,116 +7,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Basic Communication</title>
   <link rel="stylesheet" href="./assets/common.css" />
-  <link rel="stylesheet" href="./assets/main.css" />
+  <link rel="stylesheet" href="./assets/main.css?cb=1" />
 
 </head>
 <body class="agora-theme">
-  <video id="active_video"></video>
+  <video muted id="active_video"></video>
+  <div id="info_panel">aaaaa</div>
   <div class="navbar-fixed">
     <nav class="agora-navbar">
       <div class="nav-wrapper agora-primary-bg valign-wrapper">
-        <h5 class="left-align">Developers Summit 2020  - agora.io -</h5>
-        <!--<a href="https://github.com/AgoraIO/Basic-Video-Call/tree/master/One-to-One-Video/Agora-Web-Tutorial-1to1" class="agora-github-pin"></a>-->
+        <h5 class="left-align">Developers Summit 2020  - agora.io -　</h5>
+        <button class="btn btn-raised btn-primary waves-effect waves-light" id="join">JOIN</button>
+        <button class="btn btn-raised btn-primary waves-effect waves-light" id="muteAudio">MUTE AUDIO</button>
+        <button class="btn btn-raised btn-primary waves-effect waves-light" id="muteVideo">MUTE VIDEO</button>
+        <!--<button class="btn btn-raised btn-primary waves-effect waves-light" id="viewInfo">INFO</button>-->
       </div>
     </nav>
   </div>
   <form id="form" class="row col l12 s12">
     <div class="row container col l12 s12">
       <div class="col" style="min-width: 433px; max-width: 443px">
-        <div class="card" style="margin-top: 0px; margin-bottom: 0px;">
-          <div class="row card-content" style="margin-bottom: 0px;">
-              <!--<div class="input-field">
-                <label for="appID" class="active">App ID</label>
-                <input type="text" placeholder="App ID" name="appID">
-              </div>
-              <div class="input-field">
-                <label for="channel" class="active">Channel</label>
-                <input type="text" placeholder="channel" name="channel">
-              </div>
-              <div class="input-field">
-                <label for="token" class="active">Token</label>
-                <input type="text" placeholder="token" name="token">
-              </div>-->
-              <div class="row" style="margin: 0">
-                <div class="col s12">
-                <button class="btn btn-raised btn-primary waves-effect waves-light" id="join">JOIN</button>
-                <!--<button class="btn btn-raised btn-primary waves-effect waves-light" id="leave">LEAVE</button>-->
-                <!--<button class="btn btn-raised btn-primary waves-effect waves-light" id="publish">MUTE AUDIO</button>-->
-                <!--<button class="btn btn-raised btn-primary waves-effect waves-light" id="unpublish">MUTE VIDEO</button>-->
-                <button class="btn btn-raised btn-primary waves-effect waves-light" id="muteAudio">MUTE AUDIO</button>
-                <button class="btn btn-raised btn-primary waves-effect waves-light" id="muteVideo">MUTE VIDEO</button>
-
-              </div>
-              </div>
-          </div>
-        </div>
-        <ul class="collapsible card agora-secondary-border" style="margin-top: .4rem; border: 1px ">
-          <li>
-            <div class="collapsible-header agora-secondary-bg">
-              <h8 class="center-align">ADVANCED SETTINGS</h8>
-            </div>
-            <div class="collapsible-body card-content">
-              <div class="row">
-                <div class="col s12">
-                  <div class="input-field">
-                    <label for="UID" class="active">UID</label>
-                    <input type="number" placeholder="UID" name="uid">
-                  </div>
-                  <div class="input-field">
-                    <label for="cameraId" class="active">CAMERA</label>
-                    <select name="cameraId" id="cameraId"></select>
-                  </div>
-                  <div class="input-field">
-                    <label for="microphoneId" class="active">MICROPHONE</label>
-                    <select name="microphoneId" id="microphoneId"></select>
-                  </div>
-                  <div class="input-field">
-                    <label for="cameraResolution" class="active">CAMERA RESOLUTION</label>
-                    <select name="cameraResolution" id="cameraResolution"></select>
-                  </div>
-                  <div class="row col s12">
-                    <div class="row">
-                      <label for="mode" class="active">MODE</label>
-                    </div>
-                    <div class="row">
-                      <label>
-                        <input type="radio" class="with-gap" name="mode" value="live" checked />
-                        <span>live</span>
-                      </label>
-
-                      <label>
-                        <input type="radio" class="with-gap" name="mode" value="rtc" />
-                        <span>rtc</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="row col s12">
-                    <div class="row">
-                      <label for="codec" class="active">CODEC</label>
-                    </div>
-                    <div class="row">
-                      <label>
-                        <input type="radio" class="with-gap" name="codec" value="h264" checked />
-                        <span>h264</span>
-                      </label>
-
-                      <label>
-                        <input type="radio" class="with-gap" name="codec" value="vp8" />
-                        <span>vp8</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-          </li>
-        </ul>
-      </div>
       <div class="col s7">
         <div class="video-grid" id="video">
           <div class="video-view">
             <div id="local_stream" class="video-placeholder"></div>
             <div id="local_video_info" class="video-profile hide"></div>
             <div id="video_autoplay_local" class="autoplay-fallback hide"></div>
+            <div class="video-location" id="location"></div>
           </div>
         </div>
       </div>
@@ -128,24 +45,28 @@
   <script src="config.js"></script>
   <script>
     console.log("agora sdk version: " + AgoraRTC.VERSION + " compatible: " + AgoraRTC.checkSystemRequirements());
-    var resolutions = [
-      {
-        name: 'default',
-        value: 'default',
-      },
-      {
-        name: '480p',
-        value: '480p',
-      },
-      {
-        name: '720p',
-        value: '720p',
-      },
-      {
-        name: '1080p',
-        value: '1080p'
-      }
-    ];
+
+    var locations = {};
+    locations[0]  = '不明';
+    locations[1]  = '東京';
+    locations[2]  = '大阪';
+    locations[3]  = '名古屋';
+    locations[4]  = '福岡';
+    locations[5]  = '仙台';
+    locations[6]  = 'アメリカ';
+    locations[7]  = '中国';
+    locations[8]  = 'シンガポール';
+    locations[9]  = 'マレーシア';
+    locations[10] = 'タイ';
+    locations[11] = 'インドネシア';
+    locations[12] = 'インド';
+
+    var locationId = getParam('lid');
+    if(locationId == '') locationId = 0; 
+    var locationName   = locations[locationId];
+    if(locationName == '')  locationName = locations[0];
+
+    var infomationTimer;
 
     function Toastify (options) {
       M.toast({html: options.text, classes: options.classes});
@@ -155,7 +76,7 @@
       info: (msg) => {
         Toastify({
           text: msg,
-          classes: "info-toast"
+          classes: "info-toast",
         })
       },
       notice: (msg) => {
@@ -171,6 +92,7 @@
         })
       }
     };
+
     function validator(formData, fields) {
       var keys = Object.keys(formData);
       for (let key of keys) {
@@ -221,6 +143,12 @@
           id: "video_autoplay_"+ id,
           class: "autoplay-fallback hide",
         }).appendTo("#remote_video_panel_" + id);
+        
+        var remoteLocationName = locations[id];
+        if(remoteLocationName == null)  remoteLocationName = locations[0];
+        $("<div id='video-location-"+ id +"' class='video-location'>"+remoteLocationName+"</div>", {
+        }).appendTo("#remote_video_panel_" + id);
+
       }
     }
     function removeView (id) {
@@ -358,6 +286,17 @@
         //Toast.info("onTokenPrivilegeDidExpire")
         console.log("onTokenPrivilegeDidExpire")
       })
+
+      infomationTimer = setInterval(function(){
+        rtc.client.getRemoteVideoStats((remoteVideoStatsMap) => {
+          for(var uid in remoteVideoStatsMap){
+            //console.log(`Video TransportDelay from ${uid}: ${remoteVideoStatsMap[uid].TransportDelay}ms`);
+            var remoteLocationName = locations[uid];
+            if(remoteLocationName == null)  remoteLocationName = locations[0];
+            $("#video-location-"+uid).html(remoteLocationName + "(" + remoteVideoStatsMap[uid].TransportDelay+"ms)");
+          }
+        });
+      },5*1000);
     }
 
     /**
@@ -384,7 +323,8 @@
        *    Ensure that you set these properties before calling Client.join.
        *  You could find more detail here. https://docs.agora.io/en/Video/API%20Reference/web/interfaces/agorartc.clientconfig.html
       **/
-      rtc.client = AgoraRTC.createClient({mode: option.mode, codec: option.codec});
+      //rtc.client = AgoraRTC.createClient({mode: option.mode, codec: option.codec});
+      rtc.client = AgoraRTC.createClient({mode: 'live', codec: 'h264'});
 
       rtc.params = option;
 
@@ -441,11 +381,10 @@
           // init local stream
           rtc.localStream.init(function () {
             console.log("init local stream success");
-            // play stream with html element id "local_stream"
             rtc.localStream.play("local_stream")
-            //rtc.localStream.play("active_video");
 
-            // publish local stream
+            $("#location").html(locationName);
+            
             publish(rtc);
           }, function (err)  {
             Toast.error("stream init failed, please open console see more detail")
@@ -462,7 +401,6 @@
     }
 
     function publish (rtc) {
-
 
       if (!rtc.client) {
         Toast.error("Please Join Room First");
@@ -557,12 +495,12 @@
             text: video.name,
           }).appendTo("#cameraId");
         })
-        resolutions.forEach(function (resolution) {
+        /*resolutions.forEach(function (resolution) {
           $('<option/>', {
             value: resolution.value,
             text: resolution.name
           }).appendTo("#cameraResolution");
-        })
+        })*/
         M.AutoInit();
       })
 
@@ -573,6 +511,7 @@
         e.preventDefault();
         var params = serializeformData();
         if (validator(params, fields)) {
+          params.uid = locationId;
           join(rtc, params);
         }
       })
@@ -634,16 +573,21 @@
         e.preventDefault();
         var videoElement = document.getElementById("active_video");
           videoElement.srcObject = rtc.localStream.stream;
-          videoElement.onloadedmetadata = evt => {
-          videoElement.play();
-          if(rtc.transform === false){
-            rtc.transform = true;
-            videoElement.style.transform = "scale(-1, 1)";
+          videoElement.onloadedmetadata = evt => {          
+            videoElement.play();
+            if(rtc.transform === false){
+              rtc.transform = true;
+              videoElement.style.transform = "scale(-1, 1)";
+            }
           }
-        }
       });
-    })
 
+      /*$("#viewInfo").on("click", function (e) {
+        console.log("viewInfo");
+        e.preventDefault();
+        $("#info_panel").css("display","block");
+      });*/
+    })
 
     function changeMainVideo(id){
 
@@ -659,8 +603,26 @@
               videoElement.style.transform = "scale(1, 1)";
             }
           }
+        }else{
+          rtc.client.setRemoteVideoStreamType(rtc.remoteStreams[i], 1);
         }
       }
     }
+
+    function getParam(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+
+
+
+
+
   </script>
 </html>
