@@ -259,7 +259,13 @@
         rtc.remoteStreams.push(remoteStream);
         addView(id);
         remoteStream.play("remote_video_" + id);
-        document.querySelector("#video"+id).removeAttribute("controls");
+        //document.querySelector("#video"+id).removeAttribute("controls");
+
+        var videoDiv = $("#video"+id);
+        if (videoDiv && videoDiv.length > 0) {
+          var tmpVideoDiv = videoDiv.get(0);
+          tmpVideoDiv.removeAttribute("controls");
+        }
 
         //Toast.info('stream-subscribed remote-uid: ' + id);
         console.log('stream-subscribed remote-uid: ', id);
