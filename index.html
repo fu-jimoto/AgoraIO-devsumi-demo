@@ -12,7 +12,7 @@
 </head>
 <body class="agora-theme">
   <video muted id="active_video"></video>
-  <div id="info_panel">aaaaa</div>
+  <div id="info_panel"></div>
   <div class="navbar-fixed">
     <nav class="agora-navbar">
       <div class="nav-wrapper agora-primary-bg valign-wrapper">
@@ -20,7 +20,6 @@
         <button class="btn btn-raised btn-primary waves-effect waves-light" id="join">JOIN</button>
         <button class="btn btn-raised btn-primary waves-effect waves-light" id="muteAudio">MUTE AUDIO</button>
         <button class="btn btn-raised btn-primary waves-effect waves-light" id="muteVideo">MUTE VIDEO</button>
-        <!--<button class="btn btn-raised btn-primary waves-effect waves-light" id="viewInfo">INFO</button>-->
       </div>
     </nav>
   </div>
@@ -60,7 +59,11 @@
     locations[10] = 'タイ';
     locations[11] = 'インドネシア';
     locations[12] = 'インド';
+    locations[13] = '白浜';
+    locations[14] = '静岡';
+    locations[100] = 'ラズパイ';
 
+    // user management
     var locationId = getParam('lid');
     if(locationId == '') locationId = 0; 
     var locationName   = locations[locationId];
@@ -115,7 +118,7 @@
         obj[key] = val;
       }
 
-      //V-CUBE
+      //load config
       obj["appID"] = appID;
       obj["channel"] = channel;
       return obj;
@@ -127,7 +130,7 @@
           id: "remote_video_panel_" + id,
           class: "video-view",
           onclick: "changeMainVideo("+id+")"
-        }).appendTo("#video");
+        }).prependTo("#video");
 
         $("<div/>", {
           id: "remote_video_" + id,
@@ -256,7 +259,6 @@
         rtc.remoteStreams.push(remoteStream);
         addView(id);
         remoteStream.play("remote_video_" + id);
-
         document.querySelector("#video"+id).removeAttribute("controls");
 
         //Toast.info('stream-subscribed remote-uid: ' + id);
@@ -293,7 +295,9 @@
             //console.log(`Video TransportDelay from ${uid}: ${remoteVideoStatsMap[uid].TransportDelay}ms`);
             var remoteLocationName = locations[uid];
             if(remoteLocationName == null)  remoteLocationName = locations[0];
-            $("#video-location-"+uid).html(remoteLocationName + "(" + remoteVideoStatsMap[uid].TransportDelay+"ms)");
+            if(remoteVideoStatsMap[uid].TransportDelay != null){
+              $("#video-location-"+uid).html(remoteLocationName + "(" + remoteVideoStatsMap[uid].TransportDelay+"ms)");
+            }
           }
         });
       },5*1000);
@@ -323,7 +327,6 @@
        *    Ensure that you set these properties before calling Client.join.
        *  You could find more detail here. https://docs.agora.io/en/Video/API%20Reference/web/interfaces/agorartc.clientconfig.html
       **/
-      //rtc.client = AgoraRTC.createClient({mode: option.mode, codec: option.codec});
       rtc.client = AgoraRTC.createClient({mode: 'live', codec: 'h264'});
 
       rtc.params = option;
@@ -363,7 +366,6 @@
           rtc.params.uid = uid;
 
           rtc.client.enableDualStream(function() {//DualStreamの有効化
-            //client.setLowStreamParameter({birate:140, framerate:10, height:180, width:320});
             console.log("enable dual stream success.");
           }, function(err) {
           });
@@ -550,9 +552,11 @@
         if(rtc.muteAudio === false){
           rtc.muteAudio = true;
           rtc.localStream.muteAudio();
+          $("#muteAudio").html("UN MUTE AUDIO");
         }else{
           rtc.muteAudio = false;
           rtc.localStream.unmuteAudio();
+          $("#muteAudio").html("MUTE AUDIO");
         }
       });
 
@@ -562,9 +566,11 @@
         if(rtc.muteVideo === false){
           rtc.muteVideo = true;
           rtc.localStream.muteVideo();
+          $("#muteVideo").html("UN MUTE VIDEO");
         }else{
           rtc.muteVideo = false;
           rtc.localStream.unmuteVideo();
+          $("#muteVideo").html("MUTE VIDEO");
         }
       });
 
@@ -581,12 +587,6 @@
             }
           }
       });
-
-      /*$("#viewInfo").on("click", function (e) {
-        console.log("viewInfo");
-        e.preventDefault();
-        $("#info_panel").css("display","block");
-      });*/
     })
 
     function changeMainVideo(id){
@@ -618,11 +618,6 @@
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-
-
-
-
-
 
   </script>
 </html>
